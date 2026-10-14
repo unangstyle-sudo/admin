@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin e-Tamu</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Google Font: Plus Jakarta Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* ANIMASI BATIK BACKGROUND */
+    @keyframes batikFloatA {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(-1deg); }
+    }
+
+    @keyframes batikFloatB {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(10px) rotate(2deg); }
+    }
+
+    .animate-batik-1 { animation: batikFloatA 6s ease-in-out infinite; }
+    .animate-batik-2 { animation: batikFloatB 8s ease-in-out infinite 1s; }
+    .animate-batik-3 { animation: batikFloatA 7s ease-in-out infinite 2s; }
+    .animate-batik-4 { animation: batikFloatB 9s ease-in-out infinite 0.5s; }
+
+    /* STYLING KHUSUS MODE CETAK PDF */
+    .mode-cetak-pdf {
+      padding: 10px !important;
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+    }
+
+    .mode-cetak-pdf table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      border: 1.5px solid #1e293b !important;
+      margin-top: 10px !important;
+    }
+
+    .mode-cetak-pdf th, 
+    .mode-cetak-pdf td {
+      border: 1px solid #475569 !important;
+      padding: 6px 8px !important;
+      vertical-align: middle !important;
+      font-size: 10px !important;
+      line-height: 1.3 !important;
+      color: #000000 !important;
+    }
+
+    .mode-cetak-pdf th {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      text-align: center !important;
+    }
+
+    .mode-cetak-pdf .col-berkas,
+    .mode-cetak-pdf .col-aksi {
+      display: none !important;
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background-color: white !important; color: black !important; }
+    }
+  </style>
+</head>
+<body class="bg-[#083a2b] text-white min-h-screen relative overflow-x-hidden flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+  <!-- BACKGROUND BATIK ORNAMEN -->
+  <img src="https://lh3.googleusercontent.com/d/1FCllV1GdJENK-X-xnSuYAhM95ITJHAmh" class="absolute -top-6 -left-8 w-56 sm:w-72 opacity-25 pointer-events-none z-0 animate-batik-1 no-print">
+  <img src="https://lh3.googleusercontent.com/d/1FCllV1GdJENK-X-xnSuYAhM95ITJHAmh" class="absolute top-16 left-32 w-44 sm:w-56 opacity-20 pointer-events-none z-0 animate-batik-2 -rotate-12 no-print">
+  <img src="https://lh3.googleusercontent.com/d/1FCllV1GdJENK-X-xnSuYAhM95ITJHAmh" class="absolute -bottom-8 -left-10 w-60 sm:w-80 opacity-25 pointer-events-none z-0 animate-batik-4 no-print">
+  <img src="https://lh3.googleusercontent.com/d/1FCllV1GdJENK-X-xnSuYAhM95ITJHAmh" class="absolute top-4 -right-8 w-60 sm:w-72 opacity-25 pointer-events-none z-0 animate-batik-3 scale-x-[-1] no-print">
+  <img src="https://lh3.googleusercontent.com/d/1FCllV1GdJENK-X-xnSuYAhM95ITJHAmh" class="absolute bottom-28 -right-10 w-56 sm:w-72 opacity-25 pointer-events-none z-0 animate-batik-2 scale-x-[-1] no-print">
+
+  <!-- KONTEN UTAMA -->
+  <div class="relative z-10 max-w-7xl mx-auto px-6 py-6 w-full space-y-6">
+    
+    <!-- NAVBAR / HEADER -->
+    <header class="flex flex-col sm:flex-row justify-between items-center pb-4 border-b border-emerald-800/60 gap-4 no-print">
+      <div class="flex items-center space-x-3.5">
+        <img src="https://lh3.googleusercontent.com/d/1IOW9htM7FLQhNmJrmoexhR_kWY35KCpf" alt="Logo DPRD" class="h-10 w-auto drop-shadow-md">
+        <div>
+          <h1 class="text-xs sm:text-sm font-extrabold tracking-wider uppercase leading-tight text-white">PANEL ADMIN E-TAMU</h1>
+          <p class="text-[11px] text-yellow-400 font-semibold">DPRD Kabupaten Bogor</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <div class="inline-flex items-center space-x-2 bg-emerald-950/80 border border-emerald-500/40 backdrop-blur-md rounded-xl px-3 py-1.5 shadow-inner">
+          <span class="flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span class="text-[11px] font-bold text-emerald-300">Live Sync (10s)</span>
+        </div>
+        <div class="inline-flex items-center space-x-2 bg-emerald-950/60 border border-emerald-500/30 backdrop-blur-md rounded-xl px-4 py-2">
+          <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
+          <span class="text-xs font-semibold text-emerald-100" id="clock">Memuat jam...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- TITLE & ACTION BUTTON -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 no-print">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Dashboard Kunjungan</h2>
+        <p class="text-xs sm:text-sm text-emerald-100/80 mt-1">Pantau, konfirmasi persetujuan, dan cetak laporan rekapitulasi tamu secara realtime.</p>
+      </div>
+      <button onclick="bukaModalCetak()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all">
+        <i data-lucide="printer" class="w-4 h-4"></i> Cetak PDF (Laporan)
+      </button>
+    </div>
+
+    <!-- KARTU STATISTIK UTAMA -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+      <div class="bg-white rounded-2xl p-4 text-gray-800 shadow-xl flex items-center justify-between border border-emerald-100">
+        <div>
+          <p class="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Kunjungan Hari Ini</p>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-emerald-900 mt-1" id="totalHariIni">0</h3>
+        </div>
+        <div class="bg-emerald-100 p-3 rounded-xl text-emerald-800">
+          <i data-lucide="sun" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 text-gray-800 shadow-xl flex items-center justify-between border border-emerald-100">
+        <div>
+          <p class="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Kunjungan Bulan Ini</p>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1" id="totalBulanIni">0</h3>
+        </div>
+        <div class="bg-emerald-100 p-3 rounded-xl text-emerald-800">
+          <i data-lucide="calendar-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 text-gray-800 shadow-xl flex items-center justify-between border border-emerald-100">
+        <div>
+          <p class="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Total Personil</p>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1" id="totalOrangTamu">0</h3>
+        </div>
+        <div class="bg-emerald-100 p-3 rounded-xl text-emerald-800">
+          <i data-lucide="users" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 text-gray-800 shadow-xl flex items-center justify-between border border-emerald-100">
+        <div>
+          <p class="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Surat / Berkas</p>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1" id="totalBerkas">0</h3>
+        </div>
+        <div class="bg-emerald-100 p-3 rounded-xl text-emerald-800">
+          <i data-lucide="file-text" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRAFIK STATISTIK -->
+    <div class="bg-white rounded-2xl p-5 text-gray-800 shadow-xl border border-emerald-100 no-print space-y-3">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-2 border-b border-gray-100">
+        <div>
+          <h3 class="text-sm font-bold text-gray-800" id="labelGrafik">Grafik Kunjungan (7 Hari Terakhir)</h3>
+        </div>
+        <div class="inline-flex bg-gray-100 p-1 rounded-xl border border-gray-200">
+          <button id="btnChartHarian" onclick="setChartMode('harian')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#083a2b] text-white shadow-sm">7 Hari Terakhir</button>
+          <button id="btnChartBulanan" onclick="setChartMode('bulanan')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-600 hover:text-gray-900">12 Bulan</button>
+        </div>
+      </div>
+      <div class="h-56 w-full relative">
+        <canvas id="tamuChart"></canvas>
+      </div>
+    </div>
+
+    <!-- FILTER DASHBOARD BAR -->
+    <div class="bg-white rounded-2xl p-4 sm:p-5 text-gray-800 shadow-xl border border-emerald-100 flex flex-wrap gap-4 items-end no-print">
+      <div class="flex-1 min-w-[220px]">
+        <label class="block text-xs font-bold text-gray-700 mb-1.5">Pencarian Nama / Instansi</label>
+        <input type="text" id="searchInput" onkeyup="terapkanFilterDashboard()" placeholder="Ketik kata kunci nama / instansi..." class="w-full border border-gray-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition-all">
+      </div>
+      <div class="w-full sm:w-auto">
+        <label class="block text-xs font-bold text-gray-700 mb-1.5">Filter Periode Tampilan</label>
+        <select id="filterWaktu" onchange="terapkanFilterDashboard()" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition-all bg-white font-medium">
+          <option value="semua">Semua Waktu</option>
+          <option value="hari_ini">Harian (Hari Ini)</option>
+          <option value="minggu_ini">Mingguan (7 Hari)</option>
+          <option value="bulan_ini">Bulanan (Bulan Ini)</option>
+          <option value="tahun_ini">Tahunan (Tahun Ini)</option>
+        </select>
+      </div>
+      <div class="w-full sm:w-auto">
+        <label class="block text-xs font-bold text-gray-700 mb-1.5">Tanggal Spesifik</label>
+        <input type="date" id="filterTanggal" onchange="terapkanFilterDashboard()" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition-all text-gray-700">
+      </div>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button onclick="terapkanFilterDashboard()" class="flex-1 bg-[#083a2b] hover:bg-[#05291e] text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all shadow-md">Terapkan</button>
+        <button onclick="resetFilterDashboard()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-xl text-xs font-semibold transition-all">Reset</button>
+      </div>
+    </div>
+
+    <!-- AREA TABEL & LAPORAN CETAK -->
+    <div id="areaCetak" class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden text-gray-800">
+      
+      <!-- KOP SURAT FORMAL PDF -->
+      <div id="kopSurat" class="hidden text-center pb-3 mb-3 border-b-2 border-gray-800">
+        <div class="flex items-center justify-center gap-3 mb-1">
+          <img src="https://lh3.googleusercontent.com/d/1IOW9htM7FLQhNmJrmoexhR_kWY35KCpf" class="h-12 w-auto">
+          <div class="text-left">
+            <h2 class="text-base font-extrabold uppercase tracking-wide text-gray-900 leading-tight">DEWAN PERWAKILAN RAKYAT DAERAH KABUPATEN BOGOR</h2>
+            <p id="labelJudulPDF" class="text-xs text-gray-800 font-bold uppercase">LAPORAN REKAPITULASI BUKU TAMU DIGITAL (E-TAMU)</p>
+          </div>
+        </div>
+        <p class="text-xs text-gray-600 font-semibold italic mt-0.5" id="labelPeriodePDF">Periode: Semua Waktu</p>
+      </div>
+
+      <!-- TABEL DATA ALA GOOGLE SHEETS -->
+      <div class="overflow-x-auto p-2 sm:p-4">
+        <table class="w-full text-left border-collapse min-w-[1000px]">
+          <thead>
+            <tr class="bg-gray-50 text-gray-700 text-[11px] uppercase tracking-wider border-b border-gray-300">
+              <th class="p-2.5 font-bold text-center w-8">No</th>
+              <th class="p-2.5 font-bold whitespace-nowrap">Waktu Masuk</th>
+              <th class="p-2.5 font-bold">Nama Tamu</th>
+              <th class="p-2.5 font-bold">Instansi / Utusan</th>
+              <th class="p-2.5 font-bold">Kontak</th>
+              <th class="p-2.5 font-bold text-center whitespace-nowrap">Jumlah</th>
+              <th class="p-2.5 font-bold">Agenda</th>
+              <th class="p-2.5 font-bold">Keperluan</th>
+              <th class="p-2.5 font-bold text-center">Status</th>
+              <th class="p-2.5 font-bold col-berkas no-print text-center">Berkas</th>
+              <th class="p-2.5 font-bold col-aksi no-print text-center">Aksi Konfirmasi</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="text-xs divide-y divide-gray-200">
+            <tr><td colspan="11" class="p-6 text-center text-gray-400">Memuat data dari server...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed top-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none"></div>
+
+  <!-- POPUP DIALOG CETAK PDF MODAL -->
+  <div id="modalCetakPDF" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl text-gray-800 space-y-5 border border-emerald-100">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+        <div class="flex items-center gap-2 text-[#083a2b]">
+          <i data-lucide="printer" class="w-5 h-5 text-emerald-600"></i>
+          <h3 class="font-extrabold text-base">Pilih Periode Cetak PDF</h3>
+        </div>
+        <button onclick="tutupModalCetak()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="space-y-3">
+        <p class="text-xs text-gray-500 font-medium">Tentukan periode data kunjungan yang ingin dicetak ke dalam format laporan PDF:</p>
+        <div class="space-y-2">
+          <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:bg-emerald-50/50 cursor-pointer text-xs font-bold transition">
+            <input type="radio" name="periodeCetak" value="hari_ini" checked onchange="toggleTanggalModal()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+            <span>Harian (Hari Ini)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:bg-emerald-50/50 cursor-pointer text-xs font-bold transition">
+            <input type="radio" name="periodeCetak" value="minggu_ini" onchange="toggleTanggalModal()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+            <span>Mingguan (7 Hari Terakhir)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:bg-emerald-50/50 cursor-pointer text-xs font-bold transition">
+            <input type="radio" name="periodeCetak" value="bulan_ini" onchange="toggleTanggalModal()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+            <span>Bulanan (Bulan Ini)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:bg-emerald-50/50 cursor-pointer text-xs font-bold transition">
+            <input type="radio" name="periodeCetak" value="semua" onchange="toggleTanggalModal()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+            <span>Semua Data (Keseluruhan)</span>
+          </label>
+        </div>
+        <div id="containerTanggalModal" class="hidden pt-1">
+          <label class="block text-xs font-bold text-gray-700 mb-1">Pilih Tanggal Laporan:</label>
+          <input type="date" id="tglSpesifikModal" class="w-full border border-gray-300 rounded-xl p-2.5 text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none">
+        </div>
+      </div>
+      <div class="flex gap-2.5 pt-2">
+        <button onclick="tutupModalCetak()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-xs font-bold transition">Batal</button>
+        <button onclick="eksekusiCetakPDF()" class="flex-1 bg-[#083a2b] hover:bg-[#05291e] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-lg flex items-center justify-center gap-2">
+          <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> Unduh PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POPUP DIALOG KONFIRMASI CUSTOM (MEWAH) -->
+  <div id="modalKonfirmasiCustom" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl transform scale-95 transition-transform duration-300 border border-emerald-100" id="modalKonfirmasiContent">
+      <div class="flex items-center gap-3 mb-4 border-b border-gray-100 pb-4" id="modalHeader"></div>
+      <div class="space-y-4">
+        <p class="text-sm text-gray-600 leading-relaxed" id="modalMessage"></p>
+        
+        <!-- Input Textarea untuk Alasan Penolakan -->
+        <div id="areaAlasan" class="hidden">
+          <label class="block text-xs font-bold text-gray-700 mb-2">Alasan Penolakan <span class="text-rose-500">*</span></label>
+          <textarea id="inputAlasan" rows="3" class="w-full border border-gray-200 rounded-2xl p-3.5 text-sm text-gray-900 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all outline-none resize-none bg-gray-50" placeholder="Ketik alasan mengapa kunjungan ini ditolak..."></textarea>
+          <div class="flex items-center gap-1.5 mt-2">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-gray-400"></i>
+            <p class="text-[10px] text-gray-500 font-medium">Alasan ini akan dikirimkan otomatis ke email tamu.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6 pt-2">
+        <button onclick="tutupModalKonfirmasi()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-bold transition-all">Batal</button>
+        <button id="btnSubmitKonfirmasi" class="flex-1 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-lg flex items-center justify-center gap-2">Konfirmasi</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    // Jam Realtime
+    setInterval(() => {
+      document.getElementById('clock').textContent = new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'medium' });
+    }, 1000);
+
+    let rawData = [];
+    let chartInstance = null;
+    let isFirstLoad = true;
+    let modeGrafik = 'harian';
+
+    // FUNGSI NOTIFIKASI TOAST ELEGAN
+    function showToast(message, type = 'success') {
+      const toastContainer = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+
+      toast.className = `flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl transform transition-all duration-500 translate-x-full opacity-0 pointer-events-auto min-w-[280px] max-w-sm border backdrop-blur-md`;
+
+      let icon = '';
+      if (type === 'success') {
+        toast.classList.add('bg-white/95', 'text-gray-800', 'border-emerald-100');
+        icon = `<div class="bg-emerald-100 text-emerald-600 p-2 rounded-xl"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>`;
+      } else {
+        toast.classList.add('bg-white/95', 'text-gray-800', 'border-rose-100');
+        icon = `<div class="bg-rose-100 text-rose-600 p-2 rounded-xl"><i data-lucide="alert-circle" class="w-5 h-5"></i></div>`;
+      }
+
+      toast.innerHTML = `
+        ${icon}
+        <div class="flex-1">
+          <p class="text-sm font-extrabold">${type === 'success' ? 'Berhasil!' : 'Terjadi Kesalahan'}</p>
+          <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">${message}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-700 transition-colors p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      `;
+
+      toastContainer.appendChild(toast);
+      lucide.createIcons();
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => toast.remove(), 500); 
+      }, 4000);
+    }
+
+    // AUTO SYNC DATA REALTIME
+    function muatDataOtomatis() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          if (!data || data.length <= 1) {
+            document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" class="p-6 text-center text-gray-400">Belum ada data kunjungan tersimpan.</td></tr>';
+            return;
+          }
+          for (let i = 1; i < data.length; i++) {
+            data[i].sheetRowIndex = i + 1;
+          }
+          const isDataChanged = JSON.stringify(rawData) !== JSON.stringify(data);
+          if (isDataChanged || isFirstLoad) {
+            rawData = data;
+            updateRingkasanStatistik(data);
+            terapkanFilterDashboard();
+            renderChart(data);
+            isFirstLoad = false;
+          }
+        })
+        .withFailureHandler(function(err) {
+          if(isFirstLoad) {
+            document.getElementById('tableBody').innerHTML = `<tr><td colspan="11" class="p-6 text-center text-red-600 font-bold">Gagal memuat data: ${err.message}</td></tr>`;
+          }
+        })
+        .getDataTamu();
+    }
+
+    muatDataOtomatis();
+    setInterval(muatDataOtomatis, 10000);
+
+    // KARTU STATISTIK
+    function updateRingkasanStatistik(dataArray) {
+      if(dataArray.length <= 1) return;
+      const todayStr = new Date().toISOString().split('T')[0];
+      const now = new Date();
+      let countHariIni = 0, countBulanIni = 0, totalOrang = 0, countBerkas = 0;
+
+      dataArray.slice(1).forEach(row => {
+        if(!row[0]) return;
+        totalOrang += parseInt(row[3]) || 1;
+        if(row[10] && row[10].toString().startsWith('http')) countBerkas++;
+        if(row[7]) {
+          const tglRowStr = row[7].toString().trim();
+          if (tglRowStr === todayStr || tglRowStr.startsWith(todayStr)) countHariIni++;
+          const tglObj = new Date(row[7]);
+          if (!isNaN(tglObj) && tglObj.getMonth() === now.getMonth() && tglObj.getFullYear() === now.getFullYear()) countBulanIni++;
+        }
+      });
+      document.getElementById('totalHariIni').textContent = countHariIni;
+      document.getElementById('totalBulanIni').textContent = countBulanIni;
+      document.getElementById('totalOrangTamu').textContent = totalOrang;
+      document.getElementById('totalBerkas').textContent = countBerkas;
+    }
+
+    // MODE GRAFIK
+    function setChartMode(mode) {
+      modeGrafik = mode;
+      const btnHarian = document.getElementById('btnChartHarian');
+      const btnBulanan = document.getElementById('btnChartBulanan');
+      if(mode === 'harian') {
+        btnHarian.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#083a2b] text-white shadow-sm";
+        btnBulanan.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-600 hover:text-gray-900";
+        document.getElementById('labelGrafik').textContent = "Grafik Kunjungan (7 Hari Terakhir)";
+      } else {
+        btnBulanan.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#083a2b] text-white shadow-sm";
+        btnHarian.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-600 hover:text-gray-900";
+        document.getElementById('labelGrafik').textContent = "Grafik Kunjungan (Statistik 12 Bulan)";
+      }
+      renderChart(rawData);
+    }
+
+    // RENDER GRAFIK
+    function renderChart(dataArray) {
+      if(dataArray.length <= 1) return;
+      let labels = [], counts = [];
+      const barisData = dataArray.slice(1);
+      if (modeGrafik === 'harian') {
+        for (let i = 6; i >= 0; i--) {
+          let d = new Date();
+          d.setDate(d.getDate() - i);
+          labels.push(d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }));
+          counts.push(0);
+        }
+        barisData.forEach(row => {
+          if(!row[7]) return;
+          const tgl = new Date(row[7]);
+          for (let i = 0; i < 7; i++) {
+            let checkDate = new Date();
+            checkDate.setDate(checkDate.getDate() - (6 - i));
+            if (tgl.getDate() === checkDate.getDate() && tgl.getMonth() === checkDate.getMonth() && tgl.getFullYear() === checkDate.getFullYear()) {
+              counts[i]++;
+            }
+          }
+        });
+      } else {
+        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+        counts = Array(12).fill(0);
+        const currentYear = new Date().getFullYear();
+        barisData.forEach(row => {
+          if(!row[7]) return;
+          const tgl = new Date(row[7]);
+          if (tgl.getFullYear() === currentYear) counts[tgl.getMonth()]++;
+        });
+      }
+      const ctx = document.getElementById('tamuChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Kunjungan',
+            data: counts,
+            backgroundColor: '#083a2b',
+            hoverBackgroundColor: '#05291e',
+            borderRadius: 8
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
+      });
+    }
+
+    // RENDER TABEL
+    function renderTable(dataArray) {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      if(dataArray.length <= 1) {
+        tbody.innerHTML = '<tr><td colspan="11" class="p-6 text-center text-gray-500 font-medium">Tidak ada data yang cocok.</td></tr>';
+        return;
+      }
+      let count = 1;
+      dataArray.slice(1).reverse().forEach(row => {
+        if(!row[0]) return;
+        let linkBerkas = row[10];
+        let fileHTML = `<span class="text-gray-400 text-xs italic">Tidak ada</span>`;
+        if (linkBerkas && linkBerkas.toString().startsWith('http')) {
+          fileHTML = `<a href="${linkBerkas}" target="_blank" class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition"><i data-lucide="paperclip" class="w-3.5 h-3.5"></i> Lihat Berkas</a>`;
+        }
+        const status = row[11] || 'Menunggu';
+        let statusBadge = '';
+        if (status === 'Disetujui') statusBadge = `<span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-1 rounded-full text-[11px] font-extrabold"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600"></i> Disetujui</span>`;
+        else if (status === 'Ditolak') statusBadge = `<span class="inline-flex items-center gap-1 bg-rose-100 text-rose-800 border border-rose-300 px-2.5 py-1 rounded-full text-[11px] font-extrabold"><i data-lucide="x-circle" class="w-3.5 h-3.5 text-rose-600"></i> Ditolak</span>`;
+        else statusBadge = `<span class="inline-flex items-center gap-1 bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-1 rounded-full text-[11px] font-extrabold"><i data-lucide="clock" class="w-3.5 h-3.5 text-amber-600"></i> Menunggu</span>`;
+
+        const sheetRowIndex = row.sheetRowIndex;
+        const isPending = (status === 'Menunggu' || !status);
+        const namaClean = (row[2] || '').replace(/'/g, "\\'");
+        const tombolAksiHTML = `
+          <div class="flex items-center justify-center gap-1.5">
+            <button onclick="eksekusiKonfirmasi(${sheetRowIndex}, 'Disetujui', '${namaClean}')" ${!isPending ? 'disabled' : ''} class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed"><i data-lucide="check" class="w-3.5 h-3.5"></i> Setujui</button>
+            <button onclick="eksekusiKonfirmasi(${sheetRowIndex}, 'Ditolak', '${namaClean}')" ${!isPending ? 'disabled' : ''} class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed"><i data-lucide="x" class="w-3.5 h-3.5"></i> Tolak</button>
+          </div>`;
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-emerald-50/40 transition-colors";
+        tr.innerHTML = `
+          <td class="p-2.5 text-gray-500 font-medium text-center">${count++}</td>
+          <td class="p-2.5 text-gray-600 text-xs whitespace-nowrap">${row[0] || '-'}</td>
+          <td class="p-2.5 font-bold text-gray-900">${row[2] || '-'}</td>
+          <td class="p-2.5 text-xs text-gray-800 font-medium">${row[1] || '-'}</td>
+          <td class="p-2.5 text-xs text-gray-600 font-mono"><div>${row[4] || '-'}</div><div class="text-[10px] text-gray-400 font-sans">${row[5] || '-'}</div></td>
+          <td class="p-2.5 font-semibold text-gray-700 text-center whitespace-nowrap">${row[3] || '1'} Orang</td>
+          <td class="p-2.5 text-xs text-gray-800 font-medium">${row[6] || '-'}</td>
+          <td class="p-2.5 text-xs text-gray-700">${row[9] || '-'}</td>
+          <td class="p-2.5 text-center whitespace-nowrap">${statusBadge}</td>
+          <td class="p-2.5 col-berkas no-print text-center">${fileHTML}</td>
+          <td class="p-2.5 col-aksi no-print text-center">${tombolAksiHTML}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // MODAL KONFIRMASI & EKSEKUSI STATUS (MENGGUNAKAN TOAST)
+    // =========================================================================
+    let currentConfirmData = null;
+
+    function eksekusiKonfirmasi(sheetRowIndex, statusBaru, namaTamu) {
+      currentConfirmData = { sheetRowIndex, statusBaru, namaTamu };
+      const modal = document.getElementById('modalKonfirmasiCustom');
+      const content = document.getElementById('modalKonfirmasiContent');
+      const message = document.getElementById('modalMessage');
+      const areaAlasan = document.getElementById('areaAlasan');
+      const inputAlasan = document.getElementById('inputAlasan');
+      const btnSubmit = document.getElementById('btnSubmitKonfirmasi');
+      const header = document.getElementById('modalHeader');
+      
+      inputAlasan.value = "";
+      
+      if (statusBaru === 'Ditolak') {
+        header.innerHTML = `<div class="bg-rose-100 p-2 rounded-xl text-rose-600"><i data-lucide="x-circle" class="w-6 h-6"></i></div><h3 class="font-extrabold text-lg text-gray-900">Tolak Permohonan</h3>`;
+        message.innerHTML = `Anda akan menolak kunjungan dari <strong class="text-gray-900">"${namaTamu}"</strong>. Silakan isi alasan penolakan:`;
+        areaAlasan.classList.remove('hidden');
+        btnSubmit.className = "flex-1 bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-lg flex items-center justify-center gap-2";
+        btnSubmit.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim Penolakan`;
+      } else {
+        header.innerHTML = `<div class="bg-emerald-100 p-2 rounded-xl text-emerald-600"><i data-lucide="check-circle-2" class="w-6 h-6"></i></div><h3 class="font-extrabold text-lg text-gray-900">Setujui Permohonan</h3>`;
+        message.innerHTML = `Apakah Anda yakin ingin menyetujui permohonan kunjungan dari <strong class="text-gray-900">"${namaTamu}"</strong>?<br><br><span class="inline-flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 py-1 px-2 rounded-lg"><i data-lucide="mail" class="w-3.5 h-3.5"></i> Email persetujuan akan otomatis dikirim.</span>`;
+        areaAlasan.classList.add('hidden');
+        btnSubmit.className = "flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow-lg flex items-center justify-center gap-2";
+        btnSubmit.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Ya, Setujui`;
+      }
+      
+      lucide.createIcons();
+      modal.classList.remove('hidden');
+      setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
+      btnSubmit.onclick = prosesModalKonfirmasi;
+    }
+
+    function tutupModalKonfirmasi() {
+      const modal = document.getElementById('modalKonfirmasiCustom');
+      const content = document.getElementById('modalKonfirmasiContent');
+      modal.classList.add('opacity-0');
+      content.classList.add('scale-95');
+      setTimeout(() => { modal.classList.add('hidden'); currentConfirmData = null; }, 300); 
+    }
+
+    function prosesModalKonfirmasi() {
+      if (!currentConfirmData) return;
+      const { sheetRowIndex, statusBaru, namaTamu } = currentConfirmData;
+      let alasanPenolakan = "";
+      
+      if (statusBaru === 'Ditolak') {
+        alasanPenolakan = document.getElementById('inputAlasan').value.trim();
+        if (alasanPenolakan === "") {
+          showToast("Alasan penolakan WAJIB diisi!", "error");
+          document.getElementById('inputAlasan').focus();
+          return;
+        }
+      }
+      
+      const btnSubmit = document.getElementById('btnSubmitKonfirmasi');
+      const originalHTML = btnSubmit.innerHTML;
+      btnSubmit.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...`;
+      btnSubmit.disabled = true;
+      btnSubmit.classList.add('opacity-70', 'cursor-not-allowed');
+      lucide.createIcons();
+
+      // Memanggil Google Apps Script dengan Notifikasi Toast
+      google.script.run
+        .withSuccessHandler(function(res) {
+          tutupModalKonfirmasi();
+          if (res.success) {
+            showToast(`Berhasil! ${res.message}`, 'success');
+            muatDataOtomatis(); 
+          } else {
+            showToast(`Gagal: ${res.message}`, 'error');
+          }
+          resetTombolSubmit(btnSubmit, originalHTML);
+        })
+        .withFailureHandler(function(err) {
+          tutupModalKonfirmasi();
+          showToast(`Error Server: ${err.message}`, 'error');
+          resetTombolSubmit(btnSubmit, originalHTML);
+        })
+        .updateStatusTamu(sheetRowIndex, statusBaru, alasanPenolakan); 
+    }
+
+    function resetTombolSubmit(btnElement, htmlAsli) {
+      setTimeout(() => {
+        btnElement.innerHTML = htmlAsli;
+        btnElement.disabled = false;
+        btnElement.classList.remove('opacity-70', 'cursor-not-allowed');
+      }, 500);
+    }
+
+    // =========================================================================
+    // FILTER & CETAK PDF
+    // =========================================================================
+    function terapkanFilterDashboard() {
+      if(!rawData || rawData.length === 0) return;
+      const keyword = document.getElementById('searchInput').value.toLowerCase();
+      const rentang = document.getElementById('filterWaktu').value;
+      const tglSpesifik = document.getElementById('filterTanggal').value;
+      const filtered = dapatkanDataTersaring(keyword, rentang, tglSpesifik);
+      renderTable(filtered.data);
+    }
+
+    function resetFilterDashboard() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('filterWaktu').value = 'semua';
+      document.getElementById('filterTanggal').value = '';
+      terapkanFilterDashboard();
+    }
+
+    function dapatkanDataTersaring(keyword, rentang, tglSpesifik) {
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const filtered = [rawData[0]];
+      rawData.slice(1).forEach(row => {
+        if(!row[0]) return;
+        let tgl = new Date(row[7]);
+        let rowTglStr = row[7] ? row[7].toString().trim() : '';
+        let textGabungan = (row[1] + " " + row[2] + " " + row[4] + " " + row[5] + " " + row[9]).toLowerCase();
+        if (keyword && !textGabungan.includes(keyword)) return;
+        if (rentang === 'hari_ini' && rowTglStr !== todayStr) return;
+        if (rentang === 'minggu_ini') {
+          const tglBatas = new Date(); tglBatas.setDate(tglBatas.getDate() - 7);
+          if (tgl < tglBatas) return;
+        }
+        if (rentang === 'bulan_ini' && (tgl.getMonth() !== now.getMonth() || tgl.getFullYear() !== now.getFullYear())) return;
+        if (rentang === 'tahun_ini' && tgl.getFullYear() !== now.getFullYear()) return;
+        if (rentang === 'tanggal' && tglSpesifik && rowTglStr !== tglSpesifik) return;
+        filtered.push(row);
+      });
+      return { data: filtered };
+    }
+
+    function bukaModalCetak() { document.getElementById('modalCetakPDF').classList.remove('hidden'); }
+    function tutupModalCetak() { document.getElementById('modalCetakPDF').classList.add('hidden'); }
+    function toggleTanggalModal() {
+      const isCustom = document.getElementById('radioTanggalModal').checked;
+      document.getElementById('containerTanggalModal').className = isCustom ? "pt-1" : "hidden pt-1";
+    }
+
+    function eksekusiCetakPDF() {
+      const element = document.getElementById('areaCetak');
+      const opt = {
+        margin:       0.5,
+        filename:     'Laporan_Rekapitulasi_eTamu.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+      };
+      element.classList.add('mode-cetak-pdf');
+      document.getElementById('kopSurat').classList.remove('hidden'); 
+      html2pdf().set(opt).from(element).save().then(() => {
+        element.classList.remove('mode-cetak-pdf');
+        document.getElementById('kopSurat').classList.add('hidden');
+        tutupModalCetak();
+      });
+    }
+  </script>
+</body>
+</html>
